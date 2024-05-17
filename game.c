@@ -124,7 +124,7 @@ int saut_piaf(sfVector2f *deplacements)
 }
 
 
-int jeu(void)
+int jeu(sfRenderWindow *window)
 {
     int score_b = 0;
     int score_n = 0;
@@ -222,9 +222,8 @@ int jeu(void)
     int sai_alive = 0;
     int piaf_alive = 0;
     int dog_alive = 0;
-    sfRenderWindow *Window = sfRenderWindow_create(video_mode, "Jeu", sfClose | sfResize, NULL);
-    while (sfRenderWindow_isOpen(Window)) {
-        while (sfRenderWindow_pollEvent(Window, &event)) {
+    while (sfRenderWindow_isOpen(window)) {
+        while (sfRenderWindow_pollEvent(window, &event)) {
             if (event.type == sfEvtClosed) {
                 exit(0);
             }
@@ -251,7 +250,7 @@ int jeu(void)
         saut_dog(&jump_dog, &pos_dog);
         saut_piaf(&pos_piaf);
         if (dog_alive == 1 && sai_alive == 1 && piaf_alive == 1) {
-            gameover(Window);
+            gameover(window);
         }
         if (pos_barriere.x <= pos_dog.x + 20 && pos_barriere.x >= pos_dog.x - 20 && jump_dog == 0) {
             printf("DOG");
@@ -378,39 +377,39 @@ int jeu(void)
         sfSprite_setPosition(shuriken, pos_shuriken);
         sfSprite_setPosition(sai, pos_sai);
         sfSprite_setPosition(decor, pos_decor);
-        sfRenderWindow_drawSprite(Window, decor, NULL);
+        sfRenderWindow_drawSprite(window, decor, NULL);
         sfSprite_setTextureRect(sai, anim_sai);
         sfSprite_setTextureRect(piaf, anim_piaf);
         sfSprite_setTextureRect(dog, anim_dog);
         sfSprite_setTextureRect(deidapiaf, anim_deidapiaf);
-        sfRenderWindow_drawSprite(Window, piaf, NULL);
-        sfRenderWindow_drawSprite(Window, dog, NULL);
-        sfRenderWindow_drawSprite(Window, barriere, NULL);
-        sfRenderWindow_drawSprite(Window, trou, NULL);
-        sfRenderWindow_drawSprite(Window, sai, NULL);
-        sfRenderWindow_drawSprite(Window, shuriken, NULL);
-        sfRenderWindow_drawSprite(Window, deidapiaf, NULL);
-        sfRenderWindow_drawSprite(Window, yin_yang, NULL);
+        sfRenderWindow_drawSprite(window, piaf, NULL);
+        sfRenderWindow_drawSprite(window, dog, NULL);
+        sfRenderWindow_drawSprite(window, barriere, NULL);
+        sfRenderWindow_drawSprite(window, trou, NULL);
+        sfRenderWindow_drawSprite(window, sai, NULL);
+        sfRenderWindow_drawSprite(window, shuriken, NULL);
+        sfRenderWindow_drawSprite(window, deidapiaf, NULL);
+        sfRenderWindow_drawSprite(window, yin_yang, NULL);
         if (sfKeyboard_isKeyPressed(sfKeyV)) {
             sfSound_play(son);
-            sfRenderWindow_drawSprite(Window, screamers, NULL);
+            sfRenderWindow_drawSprite(window, screamers, NULL);
         }
         if (sfTime_asSeconds(sfClock_getElapsedTime(clock_score)) > 0.1) {
             if (nb == 1) {
                 score_b++;
-                sfRenderWindow_drawText(Window, text, NULL);
+                sfRenderWindow_drawText(window, text, NULL);
             } else if (nb == 0) {
-                sfRenderWindow_drawText(Window, text2, NULL);
+                sfRenderWindow_drawText(window, text2, NULL);
                 score_n++;
             }
             sfClock_restart(clock_score);
         }
         if (nb == 1) {
-            sfRenderWindow_drawText(Window, text, NULL);
+            sfRenderWindow_drawText(window, text, NULL);
         } else if (nb == 0) {
-            sfRenderWindow_drawText(Window, text2, NULL);
+            sfRenderWindow_drawText(window, text2, NULL);
         }
-        sfRenderWindow_display(Window);
+        sfRenderWindow_display(window);
     }
 }
 
@@ -438,7 +437,7 @@ int gameover(sfRenderWindow* window)
         sfRenderWindow_clear(window, sfBlack);
         if (mouse.x >= 1343 && mouse.x <= 1860 && mouse.y >= 754 && mouse.y <= 859){
             if (event.type == sfEvtMouseButtonPressed)
-                jeu();
+                jeu(window);
         }
         if (mouse.x >= 77 && mouse.x <= 577 && mouse.y >= 754 && mouse.y <= 860) {
             if (event.type == sfEvtMouseButtonPressed)

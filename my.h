@@ -19,8 +19,9 @@
     int saut (int *jump, sfVector2f *deplacements, double speed);
     int saut_dog(int *jump, sfVector2f *deplacements);
     int saut_piaf(sfVector2f *deplacements);
-    int jeu(void);
+    int jeu(sfRenderWindow *window);
     int closewindow(sfRenderWindow *window, sfEvent event);
     int gameover(sfRenderWindow* window);
-    
+    int history(sfRenderWindow *window);
+
 #endif /* !MY_H_ */
