@@ -115,6 +115,7 @@ int saut_dog(int *jump, sfVector2f *deplacements)
 
 int saut_piaf(sfVector2f *deplacements)
 {
+
     if ((sfKeyboard_isKeyPressed(sfKeyUp))) {
         deplacements->y = 0;
     }
@@ -156,6 +157,8 @@ int jeu(sfRenderWindow *window)
     sfSprite *barriere = cat("utilities/barriere.png");
     sfSprite *trou = cat("utilities/trou.png");
     sfSprite *shuriken = cat("utilities/shuriken.png");
+    sfSprite *talk = cat("utilities/itachitalk.png");
+    sfSprite *talk2 = cat("utilities/talk2.png");
     sfSprite_setOrigin(shuriken, (sfVector2f) {420, 340});
     sfSprite_setPosition(yin_yang, (sfVector2f) {1720, 200});
     sfSprite_setOrigin(yin_yang, (sfVector2f) {1024, 1024});
@@ -209,12 +212,36 @@ int jeu(sfRenderWindow *window)
     sfSound_setVolume(sound, 50);
     sfSound_setLoop(sound, sfTrue);
     sfSound_play(sound);
-    sfSoundBuffer *sonbuffer;
-    sfSound *son;
-    sonbuffer = sfSoundBuffer_createFromFile("utilities/screamer.ogg");
-    son = sfSound_create();
-    sfSound_setBuffer(son, sonbuffer);
-    sfSound_setVolume(son, 100);
+
+    sfSoundBuffer *voixbuffer;
+    sfSound *soundvoix;
+    voixbuffer = sfSoundBuffer_createFromFile("utilities/itachivoice.wav");
+    soundvoix = sfSound_create();
+    sfSound_setBuffer(soundvoix, voixbuffer);
+    sfSound_setVolume(soundvoix, 75);
+
+    sfSoundBuffer *voix2buffer;
+    sfSound *soundvoix2;
+    voix2buffer = sfSoundBuffer_createFromFile("utilities/laurentvoice.wav");
+    soundvoix2 = sfSound_create();
+    sfSound_setBuffer(soundvoix2, voix2buffer);
+    sfSound_setVolume(soundvoix2, 80);
+
+    sfSoundBuffer *bfbuffer;
+    sfSound *soundbf;
+    bfbuffer = sfSoundBuffer_createFromFile("utilities/fireball.wav");
+    soundbf = sfSound_create();
+    sfSound_setBuffer(soundbf, bfbuffer);
+    sfSound_setVolume(soundbf, 100);
+
+    sfSoundBuffer *shuribuffer;
+    sfSound *soundshuri;
+    shuribuffer = sfSoundBuffer_createFromFile("utilities/soundshuri.wav");
+    soundshuri = sfSound_create();
+    sfSound_setBuffer(soundshuri, shuribuffer);
+    sfSound_setVolume(soundshuri, 80);
+
+
     sfClock *clock_sai = sfClock_create();
     sfClock *clock_decor = sfClock_create();
     sfClock *clock_score = sfClock_create();
@@ -328,6 +355,7 @@ int jeu(sfRenderWindow *window)
             pos_decor.x -= speed;
             pos_deidapiaf.x -= speed;
             if (pos_deidapiaf.x <= -200) {
+                sfSound_play(soundbf);
                 pos_deidapiaf.x = 2000;
                 srand(time(NULL));
                 bolorean = rand() % 2;
@@ -347,6 +375,7 @@ int jeu(sfRenderWindow *window)
             }
             pos_shuriken.x -= 3 * speed;
             if (pos_shuriken.x <= -200) {
+                sfSound_play(soundshuri);
                 pos_shuriken.x = 4800;
                 srand(time(NULL));
                 bolorean = rand() % 4;
@@ -399,25 +428,24 @@ int jeu(sfRenderWindow *window)
         sfRenderWindow_drawSprite(window, shuriken, NULL);
         sfRenderWindow_drawSprite(window, deidapiaf, NULL);
         sfRenderWindow_drawSprite(window, yin_yang, NULL);
-        if (sfKeyboard_isKeyPressed(sfKeyV)) {
-            sfSound_play(son);
-            sfRenderWindow_drawSprite(window, screamers, NULL);
-        }
         if (sfTime_asSeconds(sfClock_getElapsedTime(clock_score)) > 0.1) {
-            if (nb == 1) {
-                score_b++;
-                sfRenderWindow_drawText(window, text, NULL);
-            } else if (nb == 0) {
+            if (nb == 0) {
                 sfRenderWindow_drawText(window, text2, NULL);
                 score_n++;
             }
             sfClock_restart(clock_score);
         }
-        if (nb == 1) {
-            sfRenderWindow_drawText(window, text, NULL);
-        } else if (nb == 0) {
+        if (nb == 0) {
             sfRenderWindow_drawText(window, text2, NULL);
         }
+        if (score_n == 100) {
+            sfSound_play(soundvoix);
+        } else if (score_n > 100 && score_n < 135)
+            sfRenderWindow_drawSprite(window, talk, NULL);
+        if (score_n == 150) {
+            sfSound_play(soundvoix2);
+        } else if (score_n > 150 && score_n < 200)
+            sfRenderWindow_drawSprite(window, talk2, NULL);
         sfRenderWindow_display(window);
     }
 }
