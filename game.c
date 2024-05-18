@@ -144,11 +144,11 @@ int jeu(sfRenderWindow *window)
     sfSprite *deidapiaf = cat("utilities/deidara.png");
     sfSprite *screamers = cat("utilities/screamer.jpg");
     sfSprite_setScale(screamers, (sfVector2f) {1.5, 1.5});
-    sfSprite *sai = cat("utilities/sai_nb.png");
-    sfSprite *sai_b = cat("utilities/sai_b.png");
-    sfSprite *sai_n = cat("utilities/sai_nb.png");
-    sfSprite *decor = cat("utilities/decor.png");
-    sfSprite *decor_n = cat("utilities/decor.png");
+    sfSprite *sai = cat("utilities/itachi_run.png");
+    sfSprite *sai_b = cat("utilities/itachi_run.png");
+    sfSprite *sai_n = cat("utilities/itachi_run.png");
+    sfSprite *decor = cat("utilities/decor1.png");
+    sfSprite *decor_n = cat("utilities/decor1.png");
     sfSprite *decor_b = cat("utilities/decor_b.png");
     sfSprite *yin_yang = cat("utilities/yin_yang.png");
     sfSprite *piaf = cat("utilities/piaf.png");
@@ -162,7 +162,7 @@ int jeu(sfRenderWindow *window)
     sfSprite_setScale(yin_yang, (sfVector2f) {0.15, 0.15});
     sfSprite_setScale(decor, (sfVector2f) {1.45, 1.45});
     sfSprite_setScale(dog, (sfVector2f) {2, 2});
-    sfSprite_setScale(sai, (sfVector2f) {3, 3});
+    sfSprite_setScale(sai, (sfVector2f) {4, 4});
     sfIntRect anim_sai;
     sfVector2f pos_decor = {0, -100};
     sfVector2f pos_sai = {100, 700};
@@ -182,8 +182,8 @@ int jeu(sfRenderWindow *window)
     sfSprite_setPosition(deidapiaf, pos_deidapiaf);
     anim_sai.top = 0;
     anim_sai.left = 0;
-    anim_sai.width = 81;
-    anim_sai.height = 82;
+    anim_sai.width = 74;
+    anim_sai.height = 56;
     sfIntRect anim_piaf;
     anim_piaf.top = 0;
     anim_piaf.left = 0;
@@ -201,7 +201,7 @@ int jeu(sfRenderWindow *window)
     anim_deidapiaf.height = 149;
     sfSoundBuffer *soundbuffer;
     sfSound *sound;
-    soundbuffer = sfSoundBuffer_createFromFile("utilities/ost.ogg");
+    soundbuffer = sfSoundBuffer_createFromFile("utilities/ost.wav");
     sound = sfSound_create();
     sfSound_setBuffer(sound, soundbuffer);
     sfSound_setVolume(sound, 50);
@@ -222,6 +222,12 @@ int jeu(sfRenderWindow *window)
     int sai_alive = 0;
     int piaf_alive = 0;
     int dog_alive = 0;
+
+
+
+
+
+
     while (sfRenderWindow_isOpen(window)) {
         while (sfRenderWindow_pollEvent(window, &event)) {
             if (event.type == sfEvtClosed) {
@@ -250,6 +256,7 @@ int jeu(sfRenderWindow *window)
         saut_dog(&jump_dog, &pos_dog);
         saut_piaf(&pos_piaf);
         if (dog_alive == 1 && sai_alive == 1 && piaf_alive == 1) {
+            sfSound_stop(sound);
             gameover(window);
         }
         if (pos_barriere.x <= pos_dog.x + 20 && pos_barriere.x >= pos_dog.x - 20 && jump_dog == 0) {
@@ -291,8 +298,8 @@ int jeu(sfRenderWindow *window)
             piaf_alive = 1;
         }
         if (sfTime_asSeconds(sfClock_getElapsedTime(clock_sai)) > 0.1) {
-            anim_sai.left += 81;
-            if (anim_sai.left >= 950) {
+            anim_sai.left += 74;
+            if (anim_sai.left >= 444) {
                 anim_sai.left = 0;
             }
             anim_piaf.left += 130;
@@ -429,6 +436,14 @@ int gameover(sfRenderWindow* window)
     sfVector2i mouse;
     sfTexture *texturemenu = sfTexture_createFromFile("utilities/gameover.png", NULL);
     sfSprite *spritemenu = sfSprite_create();
+    sfSoundBuffer *soundbuffer_gameover;
+    sfSound *sound_gameover;
+    soundbuffer_gameover = sfSoundBuffer_createFromFile("utilities/gameover.wav");
+    sound_gameover = sfSound_create();
+    sfSound_setBuffer(sound_gameover, soundbuffer_gameover);
+    sfSound_setVolume(sound_gameover, 100);
+    sfSound_play(sound_gameover);
+
     video_mode.width = 1920;
     video_mode.height = 1080;
     video_mode.bitsPerPixel = 32;
@@ -436,8 +451,10 @@ int gameover(sfRenderWindow* window)
         mouse = sfMouse_getPosition((const sfWindow *)window);
         sfRenderWindow_clear(window, sfBlack);
         if (mouse.x >= 1343 && mouse.x <= 1860 && mouse.y >= 754 && mouse.y <= 859){
-            if (event.type == sfEvtMouseButtonPressed)
+            if (event.type == sfEvtMouseButtonPressed) {
+                sfSound_stop(sound_gameover);
                 jeu(window);
+            }
         }
         if (mouse.x >= 77 && mouse.x <= 577 && mouse.y >= 754 && mouse.y <= 860) {
             if (event.type == sfEvtMouseButtonPressed)
