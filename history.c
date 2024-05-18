@@ -51,6 +51,13 @@ int history(sfRenderWindow *window)
     sfSound_setBuffer(sound_effect, soundbuffer_effect);
     sfSound_setVolume(sound_effect, 100);
 
+    sfSoundBuffer *soundbuffer_game;
+    sfSound *sound_game;
+    soundbuffer_game = sfSoundBuffer_createFromFile("utilities/effect.wav");
+    sound_game = sfSound_create();
+    sfSound_setBuffer(sound_game, soundbuffer_game);
+    sfSound_setVolume(sound_game, 100);
+
 
     video_mode.width = 1920;
     video_mode.height = 1080;
@@ -60,11 +67,6 @@ int history(sfRenderWindow *window)
     while (sfRenderWindow_isOpen(window)) {
         mouse = sfMouse_getPosition((const sfWindow *)window);
         sfRenderWindow_clear(window, sfBlack);
-        if (event.type == sfEvtMouseButtonPressed) {
-            sfSound_play(sound_effect);
-            sfSound_stop(sound_menu);
-            jeu(window);
-        }
         while (sfRenderWindow_pollEvent(window, &event)) {
            closewindow(window, event);
            if (event.type == sfEvtKeyPressed && sfKeyboard_isKeyPressed(sfKeySpace)) {
@@ -83,6 +85,41 @@ int history(sfRenderWindow *window)
         if (skip == 2) {
             sfSprite_setTexture(spritemenu3, texturemenu3, sfTrue);
             sfRenderWindow_drawSprite(window, spritemenu3, NULL);
+        }
+        if (skip == 3) {
+            sfSprite_setTexture(spritemenu3, texturemenu3, sfTrue);
+            texturemenu3 = sfTexture_createFromFile("utilities/slide4.png", NULL);
+            sfRenderWindow_drawSprite(window, spritemenu3, NULL);
+        }
+        if (skip == 4) {
+            sfSprite_setTexture(spritemenu3, texturemenu3, sfTrue);
+            texturemenu3 = sfTexture_createFromFile("utilities/slide5.png", NULL);
+            sfRenderWindow_drawSprite(window, spritemenu3, NULL);
+        }
+        if (skip == 5) {
+            sfSprite_setTexture(spritemenu3, texturemenu3, sfTrue);
+            texturemenu3 = sfTexture_createFromFile("utilities/slide6.png", NULL);
+            sfRenderWindow_drawSprite(window, spritemenu3, NULL);
+        }
+        if (skip == 6) {
+            sfSprite_setTexture(spritemenu3, texturemenu3, sfTrue);
+            texturemenu3 = sfTexture_createFromFile("utilities/slide7.png", NULL);
+            sfRenderWindow_drawSprite(window, spritemenu3, NULL);
+        }
+        if (skip == 7) {
+            sfSprite_setTexture(spritemenu3, texturemenu3, sfTrue);
+            texturemenu3 = sfTexture_createFromFile("utilities/slide8.png", NULL);
+            sfRenderWindow_drawSprite(window, spritemenu3, NULL);
+        }
+        if (skip == 8) {
+            sfSprite_setTexture(spritemenu3, texturemenu3, sfTrue);
+            texturemenu3 = sfTexture_createFromFile("utilities/slide9.png", NULL);
+            sfRenderWindow_drawSprite(window, spritemenu3, NULL);
+        }
+        if (skip == 9) {
+            sfSound_stop(sound_menu);
+            sfSound_play(sound_game);
+            jeu(window);
         }
         sfRenderWindow_display(window);
     }

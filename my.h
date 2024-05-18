@@ -23,5 +23,6 @@
     int closewindow(sfRenderWindow *window, sfEvent event);
     int gameover(sfRenderWindow* window);
     int history(sfRenderWindow *window);
+    int start(void);
 
 #endif /* !MY_H_ */

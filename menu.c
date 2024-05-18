@@ -52,7 +52,6 @@ int start(void)
     sfSprite_setScale(spritemenu, (sfVector2f) {1.2, 1.2});
     sfRenderWindow *window = sfRenderWindow_create(video_mode, "Itachi : The Lost Brother", sfClose | sfResize, NULL);
 
-
     while (sfRenderWindow_isOpen(window)) {
         mouse = sfMouse_getPosition((const sfWindow *)window);
         sfRenderWindow_clear(window, sfBlack);
