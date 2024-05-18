@@ -27,7 +27,7 @@ int history(sfRenderWindow *window)
     sfVideoMode video_mode;
     sfEvent event;
     sfVector2i mouse;
-    sfTexture *texturemenu = sfTexture_createFromFile("utilities/slide 1.png", NULL);
+    sfTexture *texturemenu = sfTexture_createFromFile("utilities/slide1.png", NULL);
     sfSprite *spritemenu = sfSprite_create();
     sfSoundBuffer *soundbuffer_menu;
     sfSound *sound_menu;
@@ -62,7 +62,6 @@ int history(sfRenderWindow *window)
     video_mode.width = 1920;
     video_mode.height = 1080;
     video_mode.bitsPerPixel = 32;
-    sfSprite_setScale(spritemenu, (sfVector2f) {0.5, 0.5});
 
     while (sfRenderWindow_isOpen(window)) {
         mouse = sfMouse_getPosition((const sfWindow *)window);
@@ -108,15 +107,20 @@ int history(sfRenderWindow *window)
         }
         if (skip == 7) {
             sfSprite_setTexture(spritemenu3, texturemenu3, sfTrue);
-            texturemenu3 = sfTexture_createFromFile("utilities/slide8.png", NULL);
+            texturemenu3 = sfTexture_createFromFile("utilities/slide 10.png", NULL);
             sfRenderWindow_drawSprite(window, spritemenu3, NULL);
         }
         if (skip == 8) {
             sfSprite_setTexture(spritemenu3, texturemenu3, sfTrue);
-            texturemenu3 = sfTexture_createFromFile("utilities/slide9.png", NULL);
+            texturemenu3 = sfTexture_createFromFile("utilities/slide8.png", NULL);
             sfRenderWindow_drawSprite(window, spritemenu3, NULL);
         }
         if (skip == 9) {
+            sfSprite_setTexture(spritemenu3, texturemenu3, sfTrue);
+            texturemenu3 = sfTexture_createFromFile("utilities/slide9.png", NULL);
+            sfRenderWindow_drawSprite(window, spritemenu3, NULL);
+        }
+        if (skip == 10) {
             sfSound_stop(sound_menu);
             sfSound_play(sound_game);
             jeu(window);
