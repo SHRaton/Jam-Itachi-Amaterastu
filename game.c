@@ -141,7 +141,7 @@ int jeu(sfRenderWindow *window)
     sfVideoMode video_mode;
     video_mode.width = 1920;
     video_mode.height = 1080;
-    sfSprite *deidapiaf = cat("utilities/deidara.png");
+    sfSprite *deidapiaf = cat("utilities/fireball.png");
     sfSprite *screamers = cat("utilities/screamer.jpg");
     sfSprite_setScale(screamers, (sfVector2f) {1.5, 1.5});
     sfSprite *sai = cat("utilities/itachi_run.png");
@@ -151,7 +151,7 @@ int jeu(sfRenderWindow *window)
     sfSprite *decor_n = cat("utilities/decor1.png");
     sfSprite *decor_b = cat("utilities/decor_b.png");
     sfSprite *yin_yang = cat("utilities/yin_yang.png");
-    sfSprite *piaf = cat("utilities/piaf.png");
+    sfSprite *piaf = cat("utilities/crow.png");
     sfSprite *dog = cat("utilities/dog.png");
     sfSprite *barriere = cat("utilities/barriere.png");
     sfSprite *trou = cat("utilities/trou.png");
@@ -163,6 +163,8 @@ int jeu(sfRenderWindow *window)
     sfSprite_setScale(decor, (sfVector2f) {1.45, 1.45});
     sfSprite_setScale(dog, (sfVector2f) {2, 2});
     sfSprite_setScale(sai, (sfVector2f) {4, 4});
+    sfSprite_setScale(deidapiaf, (sfVector2f) {0.5, 0.5});
+    sfSprite_setScale(piaf, (sfVector2f) {4, 4});
     sfIntRect anim_sai;
     sfVector2f pos_decor = {0, -100};
     sfVector2f pos_sai = {100, 700};
@@ -170,7 +172,7 @@ int jeu(sfRenderWindow *window)
     sfVector2f pos_dog = {300, 660};
     sfVector2f pos_barriere = {1400, 700};
     sfVector2f pos_trou = {2300, 900};
-    sfVector2f pos_deidapiaf = {2000, 0};
+    sfVector2f pos_deidapiaf = {2000, 50};
     sfVector2f pos_shuriken = {2300, 750};
     sfSprite_setPosition(shuriken, pos_shuriken);
     sfSprite_setScale(shuriken, (sfVector2f) {0.1, 0.1});
@@ -187,8 +189,8 @@ int jeu(sfRenderWindow *window)
     sfIntRect anim_piaf;
     anim_piaf.top = 0;
     anim_piaf.left = 0;
-    anim_piaf.width = 129;
-    anim_piaf.height = 154;
+    anim_piaf.width = 65;
+    anim_piaf.height = 42;
     sfIntRect anim_dog;
     anim_dog.top = 0;
     anim_dog.left = 0;
@@ -197,8 +199,8 @@ int jeu(sfRenderWindow *window)
     sfIntRect anim_deidapiaf;
     anim_deidapiaf.top = 0;
     anim_deidapiaf.left = 0;
-    anim_deidapiaf.width = 135;
-    anim_deidapiaf.height = 149;
+    anim_deidapiaf.width = 580;
+    anim_deidapiaf.height = 172;
     sfSoundBuffer *soundbuffer;
     sfSound *sound;
     soundbuffer = sfSoundBuffer_createFromFile("utilities/ost.wav");
@@ -302,19 +304,19 @@ int jeu(sfRenderWindow *window)
             if (anim_sai.left >= 444) {
                 anim_sai.left = 0;
             }
-            anim_piaf.left += 130;
+            anim_piaf.left += 65;
             if (pos_piaf.x <= 100) {
                 pos_piaf.x += 1;
             }
-            if (anim_piaf.left >= 1000) {
+            if (anim_piaf.left >= 520) {
                 anim_piaf.left = 0;
             }
             anim_dog.left += 81;
             if (anim_dog.left >= 400) {
                 anim_dog.left = 0;
             }
-            anim_deidapiaf.left += 135;
-            if (anim_deidapiaf.left >= 800) {
+            anim_deidapiaf.left += 580;
+            if (anim_deidapiaf.left >= 2320) {
                 anim_deidapiaf.left = 0;
             }
             sfClock_restart(clock_sai);
