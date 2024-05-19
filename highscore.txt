@@ -1,0 +1,6 @@
+raton:239
+bigrats:117
+racks:69
+racks:59
+racks:256
+racks:73

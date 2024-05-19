@@ -6,10 +6,10 @@
 ##
 
 all:
-	gcc -o jam-bon *.c -lcsfml-graphics \
+	gcc -o jam *.c -lcsfml-graphics \
 	-lcsfml-audio -lcsfml-system -lcsfml-window -lm
 
 fclean:
-	rm -f jam-bon
+	rm -f jam
 
 re:    fclean all

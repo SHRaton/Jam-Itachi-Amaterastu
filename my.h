@@ -12,17 +12,17 @@
     #define MY_H_
 
     sfSprite *cat(char *path);
-    int gameover(sfRenderWindow* window);
     char *reverse(char *str);
     char *inttostr(int n, char s[]);
     sfText *creer_text(char *path);
     int saut (int *jump, sfVector2f *deplacements, double speed);
     int saut_dog(int *jump, sfVector2f *deplacements);
     int saut_piaf(sfVector2f *deplacements);
-    int jeu(sfRenderWindow *window);
+    int jeu(sfRenderWindow *window, char **av);
     int closewindow(sfRenderWindow *window, sfEvent event);
-    int gameover(sfRenderWindow* window);
-    int history(sfRenderWindow *window);
-    int start(void);
+    int gameover(sfRenderWindow* window, char **av);
+    int gamewin(sfRenderWindow* window, char **av);
+    int history(sfRenderWindow *window, char **av);
+    int start(char **av);
 
 #endif /* !MY_H_ */

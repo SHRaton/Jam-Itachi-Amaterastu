@@ -21,7 +21,7 @@
 #include <math.h>
 #include "my.h"
 
-int history(sfRenderWindow *window)
+int history(sfRenderWindow *window, char **av)
 {
     int skip = 0;
     sfVideoMode video_mode;
@@ -123,7 +123,7 @@ int history(sfRenderWindow *window)
         if (skip == 10) {
             sfSound_stop(sound_menu);
             sfSound_play(sound_game);
-            jeu(window);
+            jeu(window, av);
         }
         sfRenderWindow_display(window);
     }

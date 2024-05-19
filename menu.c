@@ -21,7 +21,7 @@
 #include <math.h>
 #include "my.h"
 
-int start(void)
+int start(char **av)
 {
     sfVideoMode video_mode;
     sfEvent event;
@@ -59,7 +59,7 @@ int start(void)
             if (event.type == sfEvtMouseButtonPressed) {
                 sfSound_play(sound_effect);
                 sfSound_stop(sound_menu);
-                history(window);
+                history(window, av);
             }
         }
         while (sfRenderWindow_pollEvent(window, &event)) {
@@ -71,7 +71,11 @@ int start(void)
     }
 }
 
-int main(void)
+int main(int ac, char **av)
 {
-    start();
+    if (ac == 1) {
+        printf("Usage : ./jam [nom]\n");
+        return (84);
+    }
+    start(av);
 }

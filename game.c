@@ -73,11 +73,11 @@ sfText *creer_text(char *path)
     return (text);
 }
 
-int saut (int *jump, sfVector2f *deplacements, double speed)
+int saut(int *jump, sfVector2f *deplacements, double speed)
 {
     if ((sfKeyboard_isKeyPressed(sfKeySpace) || *jump == 1) &&
     *jump != 2) {
-        deplacements->y -= 1 + speed - 0.5;
+        deplacements->y -= 0.5 + speed + (deplacements->y / 1400);
         *jump = 1;
         if (deplacements->y < 340) {
             *jump = 0;
@@ -85,7 +85,7 @@ int saut (int *jump, sfVector2f *deplacements, double speed)
     }
     if (deplacements->y <= 350 || *jump == 2) {
         *jump = 2;
-        deplacements->y += 1 + speed - 0.5;
+        deplacements->y += 0.5 + speed + (deplacements->y / 1400);
         if (deplacements->y >= 700) {
             *jump = 0;
             deplacements->y = 700;
@@ -124,8 +124,29 @@ int saut_piaf(sfVector2f *deplacements)
     }
 }
 
+void save_score(int score, char *nom)
+{
+    FILE *fichier;
+    char *texte = malloc(sizeof(char) * 1024);
+    strcpy(texte, nom);
+    char *sc = malloc(sizeof(char) * 1024);
+    sprintf(sc, "%d", score);
+    strcat(texte, ":");
+    strcat(texte, sc);
 
-int jeu(sfRenderWindow *window)
+    fichier = fopen("highscore.txt", "a");
+    if (fichier == NULL) {
+        printf("Erreur lors de l'ouverture du fichier\n");
+        exit(1);
+    }
+    fprintf(fichier, "%s\n", texte);
+    fclose(fichier);
+    free(texte);
+    free(sc);
+    return;
+}
+
+int jeu(sfRenderWindow *window, char **av)
 {
     int score_b = 0;
     int score_n = 0;
@@ -164,7 +185,6 @@ int jeu(sfRenderWindow *window)
     sfSprite *twop = cat("utilities/2p.png");
     sfSprite *threep = cat("utilities/3p.png");
 
-
     sfSprite_setOrigin(shuriken, (sfVector2f) {420, 340});
     sfSprite_setPosition(yin_yang, (sfVector2f) {1380, 70});
     sfSprite_setScale(yin_yang, (sfVector2f) {0.5, 0.5});
@@ -180,7 +200,7 @@ int jeu(sfRenderWindow *window)
     sfVector2f pos_dog = {300, 660};
     sfVector2f pos_barriere = {1400, 700};
     sfVector2f pos_trou = {2300, 900};
-    sfVector2f pos_deidapiaf = {2000, 50};
+    sfVector2f pos_deidapiaf = {2000, 0};
     sfVector2f pos_shuriken = {2300, 750};
     sfSprite_setPosition(shuriken, pos_shuriken);
     sfSprite_setScale(shuriken, (sfVector2f) {0.1, 0.1});
@@ -254,9 +274,11 @@ int jeu(sfRenderWindow *window)
     sfSound_setVolume(soundnaru, 80);
 
 
+    sfClock *clock_jump = sfClock_create();
     sfClock *clock_sai = sfClock_create();
     sfClock *clock_decor = sfClock_create();
     sfClock *clock_score = sfClock_create();
+    sfClock *clock_talk = sfClock_create();
     int bolorean = 0;
     double speed = 0.5;
     int rotate = 0;
@@ -264,14 +286,14 @@ int jeu(sfRenderWindow *window)
     int piaf_alive = 0;
     int dog_alive = 0;
 
-
-
-
-
+    int is_talk1 = 0;
+    int is_talk2 = 0;
+    int is_talk3 = 0;
 
     while (sfRenderWindow_isOpen(window)) {
         while (sfRenderWindow_pollEvent(window, &event)) {
-            if (event.type == sfEvtClosed) {
+            if (event.type == sfEvtClosed || event.type == sfEvtKeyPressed &&
+                sfKeyboard_isKeyPressed(sfKeyEscape)) {
                 exit(0);
             }
             if (event.type == sfEvtKeyPressed &&
@@ -293,49 +315,53 @@ int jeu(sfRenderWindow *window)
                 }
             }
         }
-        saut(&jump, &pos_sai, speed);
-        saut_dog(&jump_dog, &pos_dog);
+        if (sfTime_asSeconds(sfClock_getElapsedTime(clock_jump)) > 0.00001) {
+            saut(&jump, &pos_sai, speed);
+            saut_dog(&jump_dog, &pos_dog);
+            sfClock_restart(clock_jump);
+        }
         saut_piaf(&pos_piaf);
         if (dog_alive == 1 && sai_alive == 1 && piaf_alive == 1) {
             sfSound_stop(sound);
-            gameover(window);
+            save_score(score_n, av[1]);
+            gameover(window, av);
         }
         if (pos_barriere.x <= pos_dog.x + 20 && pos_barriere.x >= pos_dog.x - 20 && jump_dog == 0) {
             printf("DOG");
-            pos_dog.x = - 100000;
-            pos_dog.y = - 500;
+            pos_dog.x = -100000;
+            pos_dog.y = -500;
             dog_alive = 1;
         }
         if (pos_shuriken.x <= pos_dog.x + 20 && pos_shuriken.x >= pos_dog.x - 20 && jump_dog == 0 && pos_shuriken.y == 750) {
             printf("SHURIKEN DOG");
-            pos_dog.x = - 100000;
-            pos_dog.y = - 500;
+            pos_dog.x = -100000;
+            pos_dog.y = -500;
             dog_alive = 1;
         }
-        if (pos_trou.x <= pos_sai.x + 2 && pos_trou.x >= pos_sai.x - 2 && jump == 0) {
+        if (pos_trou.x <= pos_sai.x + 190 && pos_trou.x >= pos_sai.x + 180 && jump == 0) {
             printf("SAI");
-            pos_sai.x = - 100000;
-            pos_sai.y = - 500;
+            pos_sai.x = -100000;
+            pos_sai.y = -500;
             sai_alive = 1;
         }
-        if (pos_shuriken.x <= pos_sai.x + 30 && pos_shuriken.x >= pos_sai.x - 2 && jump == 0 && pos_shuriken.y == 850) {
+        if (pos_shuriken.x <= pos_sai.x + 190 && pos_shuriken.x >= pos_sai.x + 180 && jump == 0 && pos_shuriken.y == 850) {
             printf("SHURIKEN SAI");
-            pos_sai.x = - 100000;
-            pos_sai.y = - 500;
+            pos_sai.x = -100000;
+            pos_sai.y = -500;
             sai_alive = 1;
         }
         if (pos_deidapiaf.x <= pos_piaf.x + 20 && pos_piaf.x >= pos_deidapiaf.x - 20 &&
         pos_deidapiaf.y == pos_piaf.y) {
             printf("OISO");
-            pos_piaf.x = - 100000;
-            pos_piaf.y = - 500;
+            pos_piaf.x = -100000;
+            pos_piaf.y = -500;
             piaf_alive = 1;
         }
         if (pos_shuriken.x <= pos_piaf.x + 20 && pos_piaf.x >= pos_shuriken.x - 20 &&
         pos_shuriken.y - 50 == pos_piaf.y) {
             printf("SHURIKEN OISO");
-            pos_piaf.x = - 100000;
-            pos_piaf.y = - 500;
+            pos_piaf.x = -100000;
+            pos_piaf.y = -500;
             piaf_alive = 1;
         }
         if (sfTime_asSeconds(sfClock_getElapsedTime(clock_sai)) > 0.1) {
@@ -366,8 +392,10 @@ int jeu(sfRenderWindow *window)
             speed += 0.000015;
             pos_decor.x -= speed;
             pos_deidapiaf.x -= speed;
-            if (pos_deidapiaf.x <= -200) {
+            if (pos_deidapiaf.x == 2000) {
                 sfSound_play(soundbf);
+            }
+            if (pos_deidapiaf.x <= -200) {
                 pos_deidapiaf.x = 2000;
                 srand(time(NULL));
                 bolorean = rand() % 2;
@@ -386,8 +414,10 @@ int jeu(sfRenderWindow *window)
                 pos_trou.x = 2300;
             }
             pos_shuriken.x -= 3 * speed;
-            if (pos_shuriken.x <= -200) {
+            if (pos_shuriken.x <= 2000 && pos_shuriken.x >= 1980) {
                 sfSound_play(soundshuri);
+            }
+            if (pos_shuriken.x <= -200) {
                 pos_shuriken.x = 4800;
                 srand(time(NULL));
                 bolorean = rand() % 4;
@@ -436,13 +466,12 @@ int jeu(sfRenderWindow *window)
         sfRenderWindow_drawSprite(window, dog, NULL);
         sfRenderWindow_drawSprite(window, barriere, NULL);
         sfRenderWindow_drawSprite(window, trou, NULL);
-        sfRenderWindow_drawSprite(window, sai, NULL);
         sfRenderWindow_drawSprite(window, shuriken, NULL);
+        sfRenderWindow_drawSprite(window, sai, NULL);
         sfRenderWindow_drawSprite(window, deidapiaf, NULL);
         sfRenderWindow_drawSprite(window, yin_yang, NULL);
         if (sfTime_asSeconds(sfClock_getElapsedTime(clock_score)) > 0.1) {
             if (nb == 0) {
-                sfRenderWindow_drawText(window, text2, NULL);
                 score_n++;
             }
             sfClock_restart(clock_score);
@@ -450,28 +479,35 @@ int jeu(sfRenderWindow *window)
         if (nb == 0) {
             sfRenderWindow_drawText(window, text2, NULL);
         }
-        if (score_n == 100) {
-            sfSound_play(soundvoix);
-        } else if (score_n > 100 && score_n < 135)
-            sfRenderWindow_drawSprite(window, talk, NULL);
-        if (score_n == 150) {
-            sfSound_play(soundvoix2);
-        } else if (score_n > 150 && score_n < 200)
-            sfRenderWindow_drawSprite(window, talk2, NULL);
-        if (score_n == 220) {
-            sfSound_play(soundnaru);
-        } else if (score_n > 220 && score_n < 250)
-            sfRenderWindow_drawSprite(window, talk3, NULL);
 
-        
-        if (score_n >= 0 && score_n < 250)
-            sfRenderWindow_drawSprite(window, allrace, NULL);
-        if (score_n >= 250 && score_n < 550)
-            sfRenderWindow_drawSprite(window, onep, NULL);
-        if (score_n >= 550 && score_n < 800)
-            sfRenderWindow_drawSprite(window, twop, NULL);
-        if (score_n >= 800 && score_n < 1050)
-            sfRenderWindow_drawSprite(window, threep, NULL);
+        if (sfTime_asSeconds(sfClock_getElapsedTime(clock_talk)) > 0.00001) {
+            if (score_n == 100)
+                sfSound_play(soundvoix);
+            if (score_n >= 100 && score_n <= 135)
+                sfRenderWindow_drawSprite(window, talk, NULL);
+            if (score_n == 150)
+                sfSound_play(soundvoix2);
+            if (score_n > 150 && score_n < 200)
+                sfRenderWindow_drawSprite(window, talk2, NULL);
+            if (score_n == 220)
+                sfSound_play(soundnaru);
+            if (score_n > 220 && score_n < 250)
+                sfRenderWindow_drawSprite(window, talk3, NULL);
+            if (score_n >= 0 && score_n < 250)
+                sfRenderWindow_drawSprite(window, allrace, NULL);
+            if (score_n >= 250 && score_n < 550)
+                sfRenderWindow_drawSprite(window, onep, NULL);
+            if (score_n >= 550 && score_n < 800)
+                sfRenderWindow_drawSprite(window, twop, NULL);
+            if (score_n >= 800 && score_n < 1050)
+                sfRenderWindow_drawSprite(window, threep, NULL);
+            sfClock_restart(clock_talk);
+        }
+        if (score_n >= 1000) {
+            sfSound_stop(sound);
+            save_score(score_n, av[1]);
+            gamewin(window, av);
+        }
         sfRenderWindow_display(window);
     }
 }
@@ -485,7 +521,7 @@ int closewindow(sfRenderWindow *window, sfEvent event)
         sfRenderWindow_close(window);
 }
 
-int gameover(sfRenderWindow* window)
+int gameover(sfRenderWindow* window, char **av)
 {
     sfVideoMode video_mode;
     sfEvent event;
@@ -509,7 +545,47 @@ int gameover(sfRenderWindow* window)
         if (mouse.x >= 1343 && mouse.x <= 1860 && mouse.y >= 754 && mouse.y <= 859){
             if (event.type == sfEvtMouseButtonPressed) {
                 sfSound_stop(sound_gameover);
-                jeu(window);
+                jeu(window, av);
+            }
+        }
+        if (mouse.x >= 77 && mouse.x <= 577 && mouse.y >= 754 && mouse.y <= 860) {
+            if (event.type == sfEvtMouseButtonPressed)
+                sfRenderWindow_close(window);
+        }
+        while (sfRenderWindow_pollEvent(window, &event)) {
+           closewindow(window, event);
+        }
+        sfSprite_setTexture(spritemenu, texturemenu, sfTrue);
+        sfRenderWindow_drawSprite(window, spritemenu, NULL);
+        sfRenderWindow_display(window);
+    }
+}
+
+int gamewin(sfRenderWindow* window, char **av)
+{
+    sfVideoMode video_mode;
+    sfEvent event;
+    sfVector2i mouse;
+    sfTexture *texturemenu = sfTexture_createFromFile("utilities/gamewin.png", NULL);
+    sfSprite *spritemenu = sfSprite_create();
+    sfSoundBuffer *soundbuffer_gameover;
+    sfSound *sound_gameover;
+    soundbuffer_gameover = sfSoundBuffer_createFromFile("utilities/gameover.wav");
+    sound_gameover = sfSound_create();
+    sfSound_setBuffer(sound_gameover, soundbuffer_gameover);
+    sfSound_setVolume(sound_gameover, 100);
+    sfSound_play(sound_gameover);
+
+    video_mode.width = 1920;
+    video_mode.height = 1080;
+    video_mode.bitsPerPixel = 32;
+    while (sfRenderWindow_isOpen(window)) {
+        mouse = sfMouse_getPosition((const sfWindow *)window);
+        sfRenderWindow_clear(window, sfBlack);
+        if (mouse.x >= 1343 && mouse.x <= 1860 && mouse.y >= 754 && mouse.y <= 859){
+            if (event.type == sfEvtMouseButtonPressed) {
+                sfSound_stop(sound_gameover);
+                jeu(window, av);
             }
         }
         if (mouse.x >= 77 && mouse.x <= 577 && mouse.y >= 754 && mouse.y <= 860) {
