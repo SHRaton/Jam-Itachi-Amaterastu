@@ -159,6 +159,7 @@ int jeu(sfRenderWindow *window)
     sfSprite *shuriken = cat("utilities/shuriken.png");
     sfSprite *talk = cat("utilities/itachitalk.png");
     sfSprite *talk2 = cat("utilities/talk2.png");
+    sfSprite *talk3 = cat("utilities/talk3.png");
     sfSprite_setOrigin(shuriken, (sfVector2f) {420, 340});
     sfSprite_setPosition(yin_yang, (sfVector2f) {1720, 200});
     sfSprite_setOrigin(yin_yang, (sfVector2f) {1024, 1024});
@@ -240,6 +241,13 @@ int jeu(sfRenderWindow *window)
     soundshuri = sfSound_create();
     sfSound_setBuffer(soundshuri, shuribuffer);
     sfSound_setVolume(soundshuri, 80);
+
+    sfSoundBuffer *buffernaru;
+    sfSound *soundnaru;
+    buffernaru = sfSoundBuffer_createFromFile("utilities/naruvoice.wav");
+    soundnaru = sfSound_create();
+    sfSound_setBuffer(soundnaru, buffernaru);
+    sfSound_setVolume(soundnaru, 80);
 
 
     sfClock *clock_sai = sfClock_create();
@@ -446,6 +454,10 @@ int jeu(sfRenderWindow *window)
             sfSound_play(soundvoix2);
         } else if (score_n > 150 && score_n < 200)
             sfRenderWindow_drawSprite(window, talk2, NULL);
+        if (score_n == 220) {
+            sfSound_play(soundnaru);
+        } else if (score_n > 220 && score_n < 250)
+            sfRenderWindow_drawSprite(window, talk3, NULL);
         sfRenderWindow_display(window);
     }
 }
