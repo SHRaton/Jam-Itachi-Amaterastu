@@ -25,4 +25,10 @@
     int history(sfRenderWindow *window, char **av);
     int start(char **av);
 
+    typedef struct {
+    char nom[50];
+    int score;
+} Score;
+
+
 #endif /* !MY_H_ */

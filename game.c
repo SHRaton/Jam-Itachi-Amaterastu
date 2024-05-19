@@ -124,26 +124,38 @@ int saut_piaf(sfVector2f *deplacements)
     }
 }
 
-void save_score(int score, char *nom)
-{
-    FILE *fichier;
-    char *texte = malloc(sizeof(char) * 1024);
-    strcpy(texte, nom);
-    char *sc = malloc(sizeof(char) * 1024);
-    sprintf(sc, "%d", score);
-    strcat(texte, ":");
-    strcat(texte, sc);
+int compare_scores(const void *a, const void *b) {
+    const Score *scoreA = (const Score *)a;
+    const Score *scoreB = (const Score *)b;
 
-    fichier = fopen("highscore.txt", "a");
+    return scoreB->score - scoreA->score;
+}
+
+void save_score(int score, char *nom) {
+    FILE *fichier;
+    Score scores[100];
+    int nb_scores = 0;
+
+    fichier = fopen("highscore.txt", "r");
+    if (fichier != NULL) {
+        while (fscanf(fichier, "%49s %d", scores[nb_scores].nom, &scores[nb_scores].score) == 2) {
+            nb_scores++;
+        }
+        fclose(fichier);
+    }
+    strcpy(scores[nb_scores].nom, nom);
+    scores[nb_scores].score = score;
+    nb_scores++;
+    qsort(scores, nb_scores, sizeof(Score), compare_scores);
+    fichier = fopen("highscore.txt", "w");
     if (fichier == NULL) {
         printf("Erreur lors de l'ouverture du fichier\n");
         exit(1);
     }
-    fprintf(fichier, "%s\n", texte);
+    for (int i = 0; i < nb_scores; i++) {
+        fprintf(fichier, "%s %d\n", scores[i].nom, scores[i].score);
+    }
     fclose(fichier);
-    free(texte);
-    free(sc);
-    return;
 }
 
 int jeu(sfRenderWindow *window, char **av)
@@ -179,6 +191,10 @@ int jeu(sfRenderWindow *window, char **av)
     sfSprite *talk = cat("utilities/itachitalk.png");
     sfSprite *talk2 = cat("utilities/talk2.png");
     sfSprite *talk3 = cat("utilities/talk3.png");
+    sfSprite *talk4 = cat("utilities/talk4.png");
+    sfSprite *talk5 = cat("utilities/talk5.png");
+    sfSprite *talk6 = cat("utilities/talksasuke.png");
+    sfSprite *talk7 = cat("utilities/talk7.png");
 
     sfSprite *allrace = cat("utilities/0p.png");
     sfSprite *onep = cat("utilities/1p.png");
@@ -272,6 +288,27 @@ int jeu(sfRenderWindow *window, char **av)
     soundnaru = sfSound_create();
     sfSound_setBuffer(soundnaru, buffernaru);
     sfSound_setVolume(soundnaru, 80);
+
+    sfSoundBuffer *buffermedal;
+    sfSound *soundmedal;
+    buffermedal = sfSoundBuffer_createFromFile("utilities/checkpoint.wav");
+    soundmedal = sfSound_create();
+    sfSound_setBuffer(soundmedal, buffermedal);
+    sfSound_setVolume(soundmedal, 80);
+
+    sfSoundBuffer *buffersasuke;
+    sfSound *soundsasuke;
+    buffersasuke = sfSoundBuffer_createFromFile("utilities/sasukescream.wav");
+    soundsasuke = sfSound_create();
+    sfSound_setBuffer(soundsasuke, buffersasuke);
+    sfSound_setVolume(soundsasuke, 80);
+
+    sfSoundBuffer *buffersc;
+    sfSound *soundsc;
+    buffersc = sfSoundBuffer_createFromFile("utilities/itachiscream.wav");
+    soundsc = sfSound_create();
+    sfSound_setBuffer(soundsc, buffersc);
+    sfSound_setVolume(soundsc, 100);
 
 
     sfClock *clock_jump = sfClock_create();
@@ -495,12 +532,38 @@ int jeu(sfRenderWindow *window, char **av)
                 sfRenderWindow_drawSprite(window, talk3, NULL);
             if (score_n >= 0 && score_n < 250)
                 sfRenderWindow_drawSprite(window, allrace, NULL);
+            if (score_n == 250)
+                sfSound_play(soundmedal);
             if (score_n >= 250 && score_n < 550)
                 sfRenderWindow_drawSprite(window, onep, NULL);
             if (score_n >= 550 && score_n < 800)
                 sfRenderWindow_drawSprite(window, twop, NULL);
+            if (score_n == 550)
+                sfSound_play(soundmedal);
             if (score_n >= 800 && score_n < 1050)
                 sfRenderWindow_drawSprite(window, threep, NULL);
+            if (score_n == 800)
+                sfSound_play(soundmedal);
+            if (score_n == 570)
+                sfSound_play(soundvoix2);
+            if (score_n >= 570 && score_n < 620)
+                sfRenderWindow_drawSprite(window, talk4, NULL);
+
+            if (score_n == 745)
+                sfSound_play(soundvoix);
+            if (score_n >= 745 && score_n <= 785)
+                sfRenderWindow_drawSprite(window, talk5, NULL);
+
+            if (score_n == 850)
+                sfSound_play(soundsasuke);
+            if (score_n >= 850 && score_n <= 875)
+                sfRenderWindow_drawSprite(window, talk6, NULL);
+
+            if (score_n == 890)
+                sfSound_play(soundsc);
+            if (score_n >= 890 && score_n <= 905)
+                sfRenderWindow_drawSprite(window, talk7, NULL);
+
             sfClock_restart(clock_talk);
         }
         if (score_n >= 1000) {
@@ -570,7 +633,7 @@ int gamewin(sfRenderWindow* window, char **av)
     sfSprite *spritemenu = sfSprite_create();
     sfSoundBuffer *soundbuffer_gameover;
     sfSound *sound_gameover;
-    soundbuffer_gameover = sfSoundBuffer_createFromFile("utilities/gameover.wav");
+    soundbuffer_gameover = sfSoundBuffer_createFromFile("utilities/gamewin.wav");
     sound_gameover = sfSound_create();
     sfSound_setBuffer(sound_gameover, soundbuffer_gameover);
     sfSound_setVolume(sound_gameover, 100);
