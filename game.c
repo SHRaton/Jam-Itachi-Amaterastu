@@ -149,7 +149,7 @@ int jeu(sfRenderWindow *window)
     sfSprite *sai_b = cat("utilities/itachi_run.png");
     sfSprite *sai_n = cat("utilities/itachi_run.png");
     sfSprite *decor = cat("utilities/decor1.png");
-    sfSprite *decor_n = cat("utilities/decor1.png");
+    sfSprite *decor_n = cat("utilities/decor2.png");
     sfSprite *decor_b = cat("utilities/decor_b.png");
     sfSprite *yin_yang = cat("utilities/yin_yang.png");
     sfSprite *piaf = cat("utilities/crow.png");
@@ -169,7 +169,7 @@ int jeu(sfRenderWindow *window)
     sfSprite_setScale(deidapiaf, (sfVector2f) {0.5, 0.5});
     sfSprite_setScale(piaf, (sfVector2f) {4, 4});
     sfIntRect anim_sai;
-    sfVector2f pos_decor = {0, -100};
+    sfVector2f pos_decor = {0, -65};
     sfVector2f pos_sai = {100, 700};
     sfVector2f pos_piaf = {50, 0};
     sfVector2f pos_dog = {300, 660};
