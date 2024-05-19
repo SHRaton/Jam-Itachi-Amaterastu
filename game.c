@@ -135,7 +135,7 @@ int jeu(sfRenderWindow *window)
     sfText_setPosition(text, (sfVector2f) {1600, 150});
     sfText *text2 = creer_text("utilities/Doctor Glitch.otf");
     sfText_setPosition(text2, (sfVector2f) {1600, 150});
-    sfText_setColor(text2, sfWhite);
+    sfText_setColor(text2, sfBlack);
     int jump = 0, jump_dog = 0;
     int nb = 0;
     sfEvent event;
@@ -143,15 +143,13 @@ int jeu(sfRenderWindow *window)
     video_mode.width = 1920;
     video_mode.height = 1080;
     sfSprite *deidapiaf = cat("utilities/fireball.png");
-    sfSprite *screamers = cat("utilities/screamer.jpg");
-    sfSprite_setScale(screamers, (sfVector2f) {1.5, 1.5});
     sfSprite *sai = cat("utilities/itachi_run.png");
     sfSprite *sai_b = cat("utilities/itachi_run.png");
     sfSprite *sai_n = cat("utilities/itachi_run.png");
     sfSprite *decor = cat("utilities/decor1.png");
     sfSprite *decor_n = cat("utilities/decor2.png");
     sfSprite *decor_b = cat("utilities/decor_b.png");
-    sfSprite *yin_yang = cat("utilities/yin_yang.png");
+    sfSprite *yin_yang = cat("utilities/score.png");
     sfSprite *piaf = cat("utilities/crow.png");
     sfSprite *dog = cat("utilities/dog.png");
     sfSprite *barriere = cat("utilities/barriere.png");
@@ -160,10 +158,16 @@ int jeu(sfRenderWindow *window)
     sfSprite *talk = cat("utilities/itachitalk.png");
     sfSprite *talk2 = cat("utilities/talk2.png");
     sfSprite *talk3 = cat("utilities/talk3.png");
+
+    sfSprite *allrace = cat("utilities/0p.png");
+    sfSprite *onep = cat("utilities/1p.png");
+    sfSprite *twop = cat("utilities/2p.png");
+    sfSprite *threep = cat("utilities/3p.png");
+
+
     sfSprite_setOrigin(shuriken, (sfVector2f) {420, 340});
-    sfSprite_setPosition(yin_yang, (sfVector2f) {1720, 200});
-    sfSprite_setOrigin(yin_yang, (sfVector2f) {1024, 1024});
-    sfSprite_setScale(yin_yang, (sfVector2f) {0.15, 0.15});
+    sfSprite_setPosition(yin_yang, (sfVector2f) {1380, 70});
+    sfSprite_setScale(yin_yang, (sfVector2f) {0.5, 0.5});
     sfSprite_setScale(decor, (sfVector2f) {1.45, 1.45});
     sfSprite_setScale(dog, (sfVector2f) {2, 2});
     sfSprite_setScale(sai, (sfVector2f) {4, 4});
@@ -458,6 +462,16 @@ int jeu(sfRenderWindow *window)
             sfSound_play(soundnaru);
         } else if (score_n > 220 && score_n < 250)
             sfRenderWindow_drawSprite(window, talk3, NULL);
+
+        
+        if (score_n >= 0 && score_n < 250)
+            sfRenderWindow_drawSprite(window, allrace, NULL);
+        if (score_n >= 250 && score_n < 550)
+            sfRenderWindow_drawSprite(window, onep, NULL);
+        if (score_n >= 550 && score_n < 800)
+            sfRenderWindow_drawSprite(window, twop, NULL);
+        if (score_n >= 800 && score_n < 1050)
+            sfRenderWindow_drawSprite(window, threep, NULL);
         sfRenderWindow_display(window);
     }
 }
